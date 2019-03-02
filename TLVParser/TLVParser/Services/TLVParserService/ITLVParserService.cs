@@ -5,6 +5,8 @@ namespace TLVParser
 {
     public interface ITLVParserService
     {
-        IEnumerable<TLVLine> ParseTLVPayload(string tlvPayloadBytes);
+        IEnumerable<TLVLine> ParseTLVPayload(List<string> tlvPayloadBytes);
+        List<TLVResourceInstance> ParseResourceInstances(List<string> resourceInstanceBytes);
+        byte[] GetResultFromHexString(string hex);
     }
 }

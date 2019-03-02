@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TLVParser.Enums;
-using TLVParser.Models;
+using TLVParser.Services.DeviceObjectInstanceService;
 
 namespace TLVParser
 {
@@ -15,7 +11,7 @@ namespace TLVParser
         {
 
             const string tlvPayloadBytes = @"C8 00 14 4F 70 65 6E 20 4D 6F 62 69 6C 65 20 41 6C 6C 69 61 6E 63 65
-C8 01 16 4C 69 67 68 74 77 65 69 67 74 20 4D 32 4D 20 43 6C 69 65 6E 74
+C8 01 16 4C 69 67 68 74 77 65 69 67 68 74 20 4D 32 4D 20 43 6C 69 65 6E 74
 C8 02 09 33 34 35 30 30 30 31 32 33
 C3 03 31 2E 30
 86 06
@@ -36,10 +32,8 @@ C6 0E 2B 30 32 3A 30 30
 C1 10 55";
 
             var serviceProvider = new ServiceCollection()
-                .AddLogging(opt =>
-                {
-                    opt.AddConsole();
-                })
+                .AddLogging()
+                .AddSingleton<IDeviceObjectInstanceService, DeviceObjectInstanceService>()
                 .AddSingleton<ITLVParserService, TLVParserService>()
                 .BuildServiceProvider();
 
@@ -48,8 +42,8 @@ C1 10 55";
             logger.LogDebug("Starting application");
 
             //do the actual work here
-            var tlvParserService = serviceProvider.GetService<ITLVParserService>();
-            var parsedTLVLines = tlvParserService.ParseTLVPayload(tlvPayloadBytes);
+            var deviceObjectInstanceService = serviceProvider.GetService<IDeviceObjectInstanceService>();
+            var result = deviceObjectInstanceService.ReadPayloadForSingleObjectInstance(tlvPayloadBytes);
 
             logger.LogDebug("TLV payload has been parsed!");
             logger.LogDebug("Press enter to close...");

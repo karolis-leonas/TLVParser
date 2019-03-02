@@ -1,6 +1,11 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TLVParser;
+using TLVParser.Models;
+using TLVParser.Models.DeviceObjectInstance;
+using TLVParser.Services.DeviceObjectInstanceService;
 
 namespace TLVParserUnitTests
 {
@@ -15,10 +20,10 @@ namespace TLVParserUnitTests
             var manufacturerResourcePayLoad = "C8 00 14 4F 70 65 6E 20 4D 6F 62 69 6C 65 20 41 6C 6C 69 61 6E 63 65";
             var expectedParserValueResult = "Open Mobile Alliance";
 
-            var tlvParserService = new TLVParserService();
-            var result = tlvParserService.ParseTLVPayload(manufacturerResourcePayLoad).First();
+            var deviceObjectInstanceService = new DeviceObjectInstanceService();
+            var result = deviceObjectInstanceService.ReadPayloadForSingleObjectInstance(manufacturerResourcePayLoad);
 
-            Assert.AreEqual(result.ValueHex, expectedParserValueResult);
+            Assert.AreEqual(result.Manufacturer, expectedParserValueResult);
         }
 
         [TestMethod]
@@ -26,7 +31,7 @@ namespace TLVParserUnitTests
         {
             const string tlvPayloadBytes = @"
                 C8 00 14 4F 70 65 6E 20 4D 6F 62 69 6C 65 20 41 6C 6C 69 61 6E 63 65
-                C8 01 16 4C 69 67 68 74 77 65 69 67 74 20 4D 32 4D 20 43 6C 69 65 6E 74
+                C8 01 16 4C 69 67 68 74 77 65 69 67 68 74 20 4D 32 4D 20 43 6C 69 65 6E 74
                 C8 02 09 33 34 35 30 30 30 31 32 33
                 C3 03 31 2E 30
                 86 06
@@ -45,6 +50,89 @@ namespace TLVParserUnitTests
                 C4 0D 51 82 42 8F
                 C6 0E 2B 30 32 3A 30 30
                 C1 10 55";
+
+            var deviceObjectInstanceService = new DeviceObjectInstanceService();
+            var result = deviceObjectInstanceService.ReadPayloadForSingleObjectInstance(tlvPayloadBytes);
+
+            Assert.AreEqual(result.Manufacturer, "Open Mobile Alliance");
+            Assert.AreEqual(result.ModelNumber, "Lightweight M2M Client");
+            Assert.AreEqual(result.SerialNumber, "345000123");
+            Assert.AreEqual(result.FirmwareVersion, "1.0");
+
+            var expectedAvailablePowerSources = new List<TLVResourceInstance>()
+            {
+                new TLVResourceInstance()
+                {
+                    Id = 0,
+                    Value = 1
+                },
+                new TLVResourceInstance()
+                {
+                    Id = 1,
+                    Value = 5
+                },
+            };
+
+            Assert.AreEqual(result.AvailablePowerSources[0].Id, expectedAvailablePowerSources[0].Id);
+            Assert.AreEqual(result.AvailablePowerSources[0].Value, expectedAvailablePowerSources[0].Value);
+            Assert.AreEqual(result.AvailablePowerSources[1].Id, expectedAvailablePowerSources[1].Id);
+            Assert.AreEqual(result.AvailablePowerSources[1].Value, expectedAvailablePowerSources[1].Value);
+
+            var expectedPowerSourceVoltages = new List<TLVResourceInstance>()
+            {
+                new TLVResourceInstance()
+                {
+                    Id = 0,
+                    Value = 3800
+                },
+                new TLVResourceInstance()
+                {
+                    Id = 1,
+                    Value = 5000
+                },
+            };
+
+            Assert.AreEqual(result.PowerSourceVoltage[0].Id, expectedPowerSourceVoltages[0].Id);
+            Assert.AreEqual(result.PowerSourceVoltage[0].Value, expectedPowerSourceVoltages[0].Value);
+            Assert.AreEqual(result.PowerSourceVoltage[1].Id, expectedPowerSourceVoltages[1].Id);
+            Assert.AreEqual(result.PowerSourceVoltage[1].Value, expectedPowerSourceVoltages[1].Value);
+
+            var expectedPowerSourceCurrents = new List<TLVResourceInstance>()
+            {
+                new TLVResourceInstance()
+                {
+                    Id = 0,
+                    Value = 125
+                },
+                new TLVResourceInstance()
+                {
+                    Id = 1,
+                    Value = 900
+                },
+            };
+
+            Assert.AreEqual(result.PowerSourceCurrent[0].Id, expectedPowerSourceCurrents[0].Id);
+            Assert.AreEqual(result.PowerSourceCurrent[0].Value, expectedPowerSourceCurrents[0].Value);
+            Assert.AreEqual(result.PowerSourceCurrent[1].Id, expectedPowerSourceCurrents[1].Id);
+            Assert.AreEqual(result.PowerSourceCurrent[1].Value, expectedPowerSourceCurrents[1].Value);
+
+            Assert.AreEqual(result.BatteryLevel, 100);
+            Assert.AreEqual(result.MemoryFree, 15);
+
+            var expectedErrorCode =  new TLVResourceInstance()
+            {
+                Id = 0,
+                Value = 0
+            };
+
+            Assert.AreEqual(result.ErrorCode[0].Id, expectedErrorCode.Id);
+            Assert.AreEqual(result.ErrorCode[0].Value, expectedErrorCode.Value);
+
+            var expectedCurrentTime = DateTimeOffset.FromUnixTimeSeconds(1367491215).DateTime;
+            Assert.AreEqual(result.CurrentTime, expectedCurrentTime);
+
+            Assert.AreEqual(result.UtcOffset, "+02:00");
+            Assert.AreEqual(result.SupportedBindingAndModes, "U");
         }
 
         [TestMethod]
@@ -53,7 +141,7 @@ namespace TLVParserUnitTests
             const string tlvPayloadBytes = @"
                 08 00 79
                     C8 00 14 4F 70 65 6E 20 4D 6F 62 69 6C 65 20 41 6C 6C 69 61 6E 63 65
-                    C8 01 16 4C 69 67 68 74 77 65 69 67 74 20 4D 32 4D 20 43 6C 69 65 6E 74
+                    C8 01 16 4C 69 67 68 74 77 65 69 67 68 74 20 4D 32 4D 20 43 6C 69 65 6E 74
                     C8 02 09 33 34 35 30 30 30 31 32 33
                     C3 03 31 2E 30
                     86 06

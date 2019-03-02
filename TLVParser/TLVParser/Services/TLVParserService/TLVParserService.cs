@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 using TLVParser.Enums;
 using TLVParser.Models;
@@ -9,11 +9,9 @@ namespace TLVParser
 {
     public class TLVParserService: ITLVParserService
     {
-        public IEnumerable<TLVLine> ParseTLVPayload(string tlvPayloadBytes)
+        public IEnumerable<TLVLine> ParseTLVPayload(List<string> tlvPayloadBytes)
         {
             var parsedTLVLines = new List<TLVLine>();
-
-            var requestBytes = tlvPayloadBytes.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
 
             var isTypeByteBeingRead = true;
             var isIdByteBeingRead = false;
@@ -22,14 +20,14 @@ namespace TLVParser
 
             var currentlyReadIdByteValue = string.Empty;
             var currentlyReadLengthByteValue = string.Empty;
-            var currentlyReadValueByteValue = string.Empty;
+            var currentlyReadValueByteValue = new List<string>();
 
             int? currentlyReadLengthFieldLength = null;
             int? currentlyReadValueFieldLength = null;
 
             var currentlyReadResource = new TLVLine();
 
-            foreach (var requestByte in requestBytes)
+            foreach (var requestByte in tlvPayloadBytes)
             {
                 if (isTypeByteBeingRead)
                 {
@@ -101,13 +99,14 @@ namespace TLVParser
                         }
                     }
 
-                    currentlyReadValueByteValue += requestByte;
+                    currentlyReadValueByteValue.Add(requestByte);
                     currentlyReadLengthFieldLength--;
 
                     if (currentlyReadLengthFieldLength == 0)
                     {
-                        currentlyReadResource.ValueHex = Encoding.UTF8.GetString(GetResultFromHexString(currentlyReadValueByteValue));
-                        currentlyReadValueByteValue = string.Empty;
+                        currentlyReadResource.ValueHex = currentlyReadValueByteValue;
+                        currentlyReadValueByteValue = new List<string>();
+                        currentlyReadLengthFieldLength = null;
 
                         parsedTLVLines.Add(currentlyReadResource);
                         currentlyReadResource = new TLVLine();
@@ -118,6 +117,40 @@ namespace TLVParser
             }
 
             return parsedTLVLines;
+        }
+
+        public List<TLVResourceInstance> ParseResourceInstances(List<string> resourceInstanceBytes)
+        {
+            var resourceInstances = new List<TLVResourceInstance>();
+
+            var tlvResourceInstanceItems = ParseTLVPayload(resourceInstanceBytes).ToList();
+
+            if (tlvResourceInstanceItems.Any())
+            {
+                foreach (var tlvResourceInstanceItem in tlvResourceInstanceItems)
+                {
+                    var parsedAvailablePowerSourceItem = new TLVResourceInstance()
+                    {
+                        Id = tlvResourceInstanceItem.Id,
+                        Value = int.Parse(string.Join(null, tlvResourceInstanceItem.ValueHex), System.Globalization.NumberStyles.HexNumber)
+                    };
+                    resourceInstances.Add(parsedAvailablePowerSourceItem);
+                }
+            }
+
+            return resourceInstances;
+        }
+
+        public byte[] GetResultFromHexString(string hex)
+        {
+            var hexLength = hex.Length;
+            var bytes = new byte[hexLength / 2];
+            for (int hexByteIndex = 0; hexByteIndex < hexLength; hexByteIndex += 2)
+            {
+                bytes[hexByteIndex / 2] = Convert.ToByte(hex.Substring(hexByteIndex, 2), 16);
+            }
+
+            return bytes;
         }
 
         private TLVType ParseTLVType(string maskedField)
@@ -136,7 +169,7 @@ namespace TLVParser
                 IdentifierType = (TLVIdentifierType)Convert.ToInt32(parsedTypeBytes.Substring(0, 2), 2),
                 IdentifierLength = (TLVIdentifierLength)Convert.ToInt32(parsedTypeBytes.Substring(2, 1), 2),
                 LengthType = (TLVLengthType)Convert.ToInt32(parsedTypeBytes.Substring(3, 2), 2),
-                ValueLength = Convert.ToInt32(parsedTypeBytes.Substring(5, 3))
+                ValueLength = Convert.ToInt32(parsedTypeBytes.Substring(5, 3), 2)
             };
 
             return parsedTLVType;
@@ -150,16 +183,6 @@ namespace TLVParser
         private bool CheckIfHexNumber(string text)
         {
             return Regex.IsMatch(text, @"\A\b[0-9a-fA-F]+\b\Z");
-        }
-
-        private byte[] GetResultFromHexString(string hex)
-        {
-            int NumberChars = hex.Length;
-            byte[] bytes = new byte[NumberChars / 2];
-            for (int i = 0; i < NumberChars; i += 2)
-                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-
-            return bytes;
         }
     }
 }

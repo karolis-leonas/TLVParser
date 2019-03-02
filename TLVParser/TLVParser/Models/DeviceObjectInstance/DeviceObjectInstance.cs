@@ -16,6 +16,7 @@ namespace TLVParser.Models.DeviceObjectInstance
         public int MemoryFree { get; set; }
         public List<TLVResourceInstance> ErrorCode { get; set; }
         public DateTime CurrentTime { get; set; }
+        public string UtcOffset { get; set; }
         public string SupportedBindingAndModes { get; set; }
     }
 }

@@ -12,7 +12,8 @@
         BatteryLevel = 9,
         MemoryFree = 10,
         ErrorCode = 11,
-        CurrentTime = 12,
-        SupportedBindingAndModes = 13
+        CurrentTime = 13,
+        UtcOffset = 14,
+        SupportedBindingAndModes = 16
     }
 }
