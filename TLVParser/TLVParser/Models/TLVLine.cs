@@ -5,6 +5,6 @@
         public TLVType Type { get; set; }
         public int Id { get; set; }
         public int? Length { get; set; }
-        public object Value { get; set; }
+        public string ValueHex { get; set; }
     }
 }

@@ -106,7 +106,7 @@ namespace TLVParser
 
                     if (currentlyReadLengthFieldLength == 0)
                     {
-                        currentlyReadResource.Value = Encoding.UTF8.GetString(GetResultFromHexString(currentlyReadValueByteValue));
+                        currentlyReadResource.ValueHex = Encoding.UTF8.GetString(GetResultFromHexString(currentlyReadValueByteValue));
                         currentlyReadValueByteValue = string.Empty;
 
                         parsedTLVLines.Add(currentlyReadResource);

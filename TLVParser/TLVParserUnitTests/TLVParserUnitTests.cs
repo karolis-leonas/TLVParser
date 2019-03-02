@@ -18,7 +18,7 @@ namespace TLVParserUnitTests
             var tlvParserService = new TLVParserService();
             var result = tlvParserService.ParseTLVPayload(manufacturerResourcePayLoad).First();
 
-            Assert.AreEqual(result.Value, expectedParserValueResult);
+            Assert.AreEqual(result.ValueHex, expectedParserValueResult);
         }
 
         [TestMethod]
