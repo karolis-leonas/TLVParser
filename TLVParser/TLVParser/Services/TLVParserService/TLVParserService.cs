@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using TLVParser.Enums;
 using TLVParser.Models;
+using TLVParser.Models.ResourceInstances;
 
 namespace TLVParser
 {

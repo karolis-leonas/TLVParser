@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TLVParser.Models;
+using TLVParser.Models.ResourceInstances;
 
 namespace TLVParser
 {

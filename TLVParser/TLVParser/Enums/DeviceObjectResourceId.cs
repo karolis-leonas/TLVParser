@@ -1,6 +1,6 @@
 ﻿namespace TLVParser.Enums
 {
-    public enum DeviceObjectInstanceResourceId
+    public enum DeviceObjectResourceId
     {
         Manufacturer = 0,
         ModelNumber = 1,

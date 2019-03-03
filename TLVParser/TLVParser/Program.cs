@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TLVParser.Services.DeviceObjectInstanceService;
+using TLVParser.Services.DeviceObjectService;
 
 namespace TLVParser
 {
@@ -33,7 +33,7 @@ C1 10 55";
 
             var serviceProvider = new ServiceCollection()
                 .AddLogging()
-                .AddSingleton<IDeviceObjectInstanceService, DeviceObjectInstanceService>()
+                .AddSingleton<IDeviceObjectService, DeviceObjectService>()
                 .AddSingleton<ITLVParserService, TLVParserService>()
                 .BuildServiceProvider();
 
@@ -42,8 +42,8 @@ C1 10 55";
             logger.LogDebug("Starting application");
 
             //do the actual work here
-            var deviceObjectInstanceService = serviceProvider.GetService<IDeviceObjectInstanceService>();
-            var result = deviceObjectInstanceService.ReadPayloadForSingleDeviceObjectInstance(tlvPayloadBytes);
+            var deviceObjectInstanceService = serviceProvider.GetService<IDeviceObjectService>();
+            var result = deviceObjectInstanceService.ReadSingleDeviceObject(tlvPayloadBytes);
 
             logger.LogDebug("TLV payload has been parsed!");
             logger.LogDebug("Press enter to close...");

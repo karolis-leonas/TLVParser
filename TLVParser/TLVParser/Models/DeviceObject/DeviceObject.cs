@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using TLVParser.Models.ResourceInstances;
 
-namespace TLVParser.Models.DeviceObjectInstance
+namespace TLVParser.Models.DeviceObject
 {
-    public class DeviceObjectInstance
+    public class DeviceObject
     {
         public string Manufacturer { get; set; }
         public string ModelNumber { get; set; }
