@@ -4,6 +4,8 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TLVParser.Models.AccessControlObject;
 using TLVParser.Models.DeviceObject;
+using TLVParser.Models.ObjectLink;
+using TLVParser.Models.RequestsToObjects.RequestToObject66;
 using TLVParser.Models.ResourceInstances;
 using TLVParser.Services.AccessControlObjectService;
 using TLVParser.Services.DeviceObjectService;
@@ -14,8 +16,6 @@ namespace TLVParserUnitTests
     [TestClass]
     public class TLVParserUnitTests
     {
-
-
         [TestMethod]
         public void SingleLineTest()
         {
@@ -147,7 +147,7 @@ namespace TLVParserUnitTests
         }
 
         [TestMethod]
-        public void ObjectInstanceRequestWithObjectLinkTest1()
+        public void SingleRequestToObjectTest()
         {
             const string tlvPayloadBytes = @"
                 88 00 0C
@@ -155,20 +155,55 @@ namespace TLVParserUnitTests
                     44 01 00 42 00 01
                 C8 01 0D 38 36 31 33 38 30 30 37 35 35 35 30 30
                 C4 02 12 34 56 78";
+
+            var requestToObjectService = new RequestToObjectService();
+            var requestObject = requestToObjectService.ReadRequestToObject65WithSingleInstance(tlvPayloadBytes);
+
+            var expectedObjectLinks = new List<ObjectLink>()
+            {
+                new ObjectLink()
+                {
+                    ObjectId = 66,
+                    ObjectInstanceId = 0
+                },
+                new ObjectLink()
+                {
+                    ObjectId = 66,
+                    ObjectInstanceId = 1
+                },
+            };
+
+            for (var objectLinkIndex = 0; objectLinkIndex < requestObject.Res0.Count; objectLinkIndex++)
+            {
+                var realObjectLink = requestObject.Res0[objectLinkIndex].ObjectLink;
+                var expectedObjectLink = expectedObjectLinks[objectLinkIndex];
+
+                Assert.AreEqual(expectedObjectLink.ObjectId, realObjectLink.ObjectId);
+                Assert.AreEqual(expectedObjectLink.ObjectInstanceId, realObjectLink.ObjectInstanceId);
+            }
+
+            Assert.AreEqual("8613800755500", requestObject.Res1);
+            Assert.AreEqual(305419896, requestObject.Res2);
+
         }
 
         [TestMethod]
-        public void ObjectInstanceRequestWithObjectLinkTest2()
+        public void MultipleRequestToOrderTest()
         {
             const string tlvPayloadBytes = @"
-                08 00 23
+                08 00 26
                     C8 00 0B 6D 79 53 65 72 76 69 63 65 20 31
                     C8 01 0F 49 6E 74 65 72 6E 65 74 2E 31 35 2E 32 33 34
                     C4 02 00 43 00 00
-                08 01 23
+                08 01 26
                     C8 00 0B 6D 79 53 65 72 76 69 63 65 20 32
                     C8 01 0F 49 6E 74 65 72 6E 65 74 2E 31 35 2E 32 33 35
                     C4 02 FF FF FF FF";
+
+            var requestToObjectService = new RequestToObjectService();
+            var requestObjects = requestToObjectService.ReadRequestToObject66WithMultipleInstances(tlvPayloadBytes).ToList();
+
+            CheckRequestsToObject66(requestObjects);
         }
 
 
@@ -257,11 +292,11 @@ namespace TLVParserUnitTests
             Assert.AreEqual("U", deviceObject.SupportedBindingAndModes);
         }
 
-        private void CheckAccessControlObjectInstances(List<MultipleAccessControlObject> accessControlObjects)
+        private void CheckAccessControlObjectInstances(List<ExtendedAccessControlObject> accessControlObjects)
         {
-            var expectedAccessControlObjects = new List<MultipleAccessControlObject>()
+            var expectedAccessControlObjects = new List<ExtendedAccessControlObject>()
             {
-                new MultipleAccessControlObject()
+                new ExtendedAccessControlObject()
                 {
                     Id = 0,
                     AccessControlObject = new AccessControlObject()
@@ -280,7 +315,7 @@ namespace TLVParserUnitTests
                         AccessControlOwner = 127
                     },
                 },
-                new MultipleAccessControlObject()
+                new ExtendedAccessControlObject()
                 {
                     Id = 2,
                     AccessControlObject = new AccessControlObject()
@@ -336,6 +371,61 @@ namespace TLVParserUnitTests
 
                 Assert.AreEqual(expectedAccessControlItem.AccessControlObject.AccessControlOwner,
                     realAccessControlItem.AccessControlObject.AccessControlOwner);
+            }
+        }
+
+        private void CheckRequestsToObject66(List<ExtendedRequestToObject66> requestsToObject66)
+        {
+            var expectedObjectLinks = new List<ExtendedRequestToObject66>()
+            {
+                new ExtendedRequestToObject66()
+                {
+                    Id = 0,
+                    RequestToObject66 = new RequestToObject66()
+                    {
+                        Res0 = "myService 1",
+                        Res1 = "Internet.15.234",
+                        Res2 = new ObjectLink()
+                        {
+                            ObjectId = 67,
+                            ObjectInstanceId = 0
+                        }
+                    }
+                },
+                new ExtendedRequestToObject66()
+                {
+                    Id = 1,
+                    RequestToObject66 = new RequestToObject66()
+                    {
+                        Res0 = "myService 2",
+                        Res1 = "Internet.15.235",
+                        Res2 = new ObjectLink()
+                        {
+                            ObjectId = 65535,
+                            ObjectInstanceId = 65535
+                        }
+                    }
+                },
+            };
+
+            for (var accessControlObjectIndex = 0; accessControlObjectIndex < requestsToObject66.Count; accessControlObjectIndex++)
+            {
+                var realRequestItem = requestsToObject66[accessControlObjectIndex];
+                var expectedAccessControlItem = expectedObjectLinks[accessControlObjectIndex];
+
+                Assert.AreEqual(expectedAccessControlItem.Id, realRequestItem.Id);
+
+                Assert.AreEqual(expectedAccessControlItem.RequestToObject66.Res0,
+                    realRequestItem.RequestToObject66.Res0);
+
+                Assert.AreEqual(expectedAccessControlItem.RequestToObject66.Res1,
+                    realRequestItem.RequestToObject66.Res1);
+
+                Assert.AreEqual(expectedAccessControlItem.RequestToObject66.Res2.ObjectId,
+                    realRequestItem.RequestToObject66.Res2.ObjectId);
+
+                Assert.AreEqual(expectedAccessControlItem.RequestToObject66.Res2.ObjectInstanceId,
+                    realRequestItem.RequestToObject66.Res2.ObjectInstanceId);
             }
         }
     }

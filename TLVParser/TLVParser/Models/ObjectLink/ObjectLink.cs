@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TLVParser.Models
+﻿namespace TLVParser.Models.ObjectLink
 {
     public class ObjectLink
     {

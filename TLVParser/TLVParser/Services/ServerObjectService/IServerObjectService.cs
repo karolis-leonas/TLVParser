@@ -6,7 +6,7 @@ namespace TLVParser.Services.ServerObjectService
 {
     public interface IServerObjectService
     {
-        IEnumerable<MultiServerObject> ReadMultipleServerObjects(string payload);
+        IEnumerable<ExtendedServerObject> ReadMultipleServerObjects(string payload);
         ServerObject ReadSingleServerObject(string payload);
     }
 }

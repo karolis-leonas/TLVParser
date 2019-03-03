@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using TLVParser.Enums;
 using TLVParser.Models;
+using TLVParser.Models.ObjectLink;
 using TLVParser.Models.ResourceInstances;
 
 namespace TLVParser
@@ -142,16 +143,27 @@ namespace TLVParser
             return resourceInstances;
         }
 
-        public byte[] GetResultFromHexString(string hex)
+        public byte[] GetResultFromHexString(string hexString)
         {
-            var hexLength = hex.Length;
-            var bytes = new byte[hexLength / 2];
-            for (int hexByteIndex = 0; hexByteIndex < hexLength; hexByteIndex += 2)
+            var hexStringLength = hexString.Length;
+            var bytes = new byte[hexStringLength / 2];
+            for (int hexByteIndex = 0; hexByteIndex < hexStringLength; hexByteIndex += 2)
             {
-                bytes[hexByteIndex / 2] = Convert.ToByte(hex.Substring(hexByteIndex, 2), 16);
+                bytes[hexByteIndex / 2] = Convert.ToByte(hexString.Substring(hexByteIndex, 2), 16);
             }
 
             return bytes;
+        }
+
+        public ObjectLink ParseObjectLink(List<string> objectLinkByteValues)
+        {
+            var objectLinkResult = new ObjectLink()
+            {
+                ObjectId = int.Parse(objectLinkByteValues[0] + objectLinkByteValues[1], System.Globalization.NumberStyles.HexNumber),
+                ObjectInstanceId = int.Parse(objectLinkByteValues[2] + objectLinkByteValues[3], System.Globalization.NumberStyles.HexNumber)
+            };
+
+            return objectLinkResult;
         }
 
         private TLVType ParseTLVType(string maskedField)

@@ -18,16 +18,16 @@ namespace TLVParser.Services.AccessControlObjectService
             _tlvParserService = new TLVParserService();
         }
 
-        public IEnumerable<MultipleAccessControlObject> ReadMultipleAccessControlObjects(string payload)
+        public IEnumerable<ExtendedAccessControlObject> ReadMultipleAccessControlObjects(string payload)
         {
-            var multipleAccessControlObjects = new List<MultipleAccessControlObject>();
+            var multipleAccessControlObjects = new List<ExtendedAccessControlObject>();
 
             var tlvPayloadBytes = payload.Split((char[])null, StringSplitOptions.RemoveEmptyEntries).ToList();
             var parsedTLVObjectInstanceObjects = _tlvParserService.ParseTLVPayload(tlvPayloadBytes).ToList();
 
             foreach (var parsedTLVObjectInstanceObject in parsedTLVObjectInstanceObjects)
             {
-                var accessControlObject = new MultipleAccessControlObject()
+                var accessControlObject = new ExtendedAccessControlObject()
                 {
                     Id = parsedTLVObjectInstanceObject.Id,
                     AccessControlObject = ReadDeviceObjectInstance(parsedTLVObjectInstanceObject.ValueHex)

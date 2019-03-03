@@ -1,6 +1,6 @@
 ﻿namespace TLVParser.Models.AccessControlObject
 {
-    public class MultipleAccessControlObject
+    public class ExtendedAccessControlObject
     {
         public int Id { get; set; }
         public AccessControlObject AccessControlObject { get; set; }

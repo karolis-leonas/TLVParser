@@ -16,16 +16,16 @@ namespace TLVParser.Services.ServerObjectService
             _tlvParserService = new TLVParserService();
         }
 
-        public IEnumerable<MultiServerObject> ReadMultipleServerObjects(string payload)
+        public IEnumerable<ExtendedServerObject> ReadMultipleServerObjects(string payload)
         {
-            var serverObjects = new List<MultiServerObject>();
+            var serverObjects = new List<ExtendedServerObject>();
 
             var tlvPayloadBytes = payload.Split((char[])null, StringSplitOptions.RemoveEmptyEntries).ToList();
             var serverObjectsToBeRead = _tlvParserService.ParseTLVPayload(tlvPayloadBytes).ToList();
 
             foreach (var serverObjectToBeRead in serverObjectsToBeRead)
             {
-                var serverObject = new MultiServerObject()
+                var serverObject = new ExtendedServerObject()
                 {
                     Id = serverObjectToBeRead.Id,
                     ServerObject = ParseServerObject(serverObjectToBeRead.ValueHex)

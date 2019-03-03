@@ -1,6 +1,6 @@
 ﻿namespace TLVParser.Models.ServerObject
 {
-    public class MultiServerObject
+    public class ExtendedServerObject
     {
         public int Id { get; set; }
         public ServerObject ServerObject { get; set; }

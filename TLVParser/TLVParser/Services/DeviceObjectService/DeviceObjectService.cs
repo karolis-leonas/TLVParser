@@ -16,16 +16,16 @@ namespace TLVParser.Services.DeviceObjectService
             _tlvParserService = new TLVParserService();
         }
 
-        public IEnumerable<MultiDeviceObject> ReadMultipleDeviceObjects(string payload)
+        public IEnumerable<ExtendedDeviceObject> ReadMultipleDeviceObjects(string payload)
         {
-            var deviceObjects = new List<MultiDeviceObject>();
+            var deviceObjects = new List<ExtendedDeviceObject>();
 
             var tlvPayloadBytes = payload.Split((char[])null, StringSplitOptions.RemoveEmptyEntries).ToList();
             var deviceObjectsToBeRead = _tlvParserService.ParseTLVPayload(tlvPayloadBytes).ToList();
 
             foreach (var deviceObjectToBeRead in deviceObjectsToBeRead)
             {
-                var deviceObject = new MultiDeviceObject()
+                var deviceObject = new ExtendedDeviceObject()
                 {
                     Id = deviceObjectToBeRead.Id,
                     DeviceObject = ParseDeviceObject(deviceObjectToBeRead.ValueHex)

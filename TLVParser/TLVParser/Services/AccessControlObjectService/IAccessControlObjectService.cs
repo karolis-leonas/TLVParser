@@ -5,7 +5,7 @@ namespace TLVParser.Services.AccessControlObjectService
 {
     public interface IAccessControlObjectService
     {
-        IEnumerable<MultipleAccessControlObject> ReadMultipleAccessControlObjects(string payload);
+        IEnumerable<ExtendedAccessControlObject> ReadMultipleAccessControlObjects(string payload);
         AccessControlObject ReadSingleAccessControlObject(string payload);
     }
 }
