@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TLVParser.Models.LWM2mServerObject
+﻿namespace TLVParser.Models.ServerObject
 {
-    public class LWM2mServerObject
+    public class ServerObject
     {
         public int ShortServerId { get; set; }
         public int Lifetime { get; set; }

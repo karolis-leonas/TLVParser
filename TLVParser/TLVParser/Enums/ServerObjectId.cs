@@ -1,6 +1,6 @@
 ﻿namespace TLVParser.Enums
 {
-    public enum LWM2MServerObjectId
+    public enum ServerObjectId
     {
         ShortServerId = 0,
         Lifetime = 1,

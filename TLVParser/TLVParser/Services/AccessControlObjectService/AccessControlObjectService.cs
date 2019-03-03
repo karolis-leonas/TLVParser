@@ -18,7 +18,7 @@ namespace TLVParser.Services.AccessControlObjectService
             _tlvParserService = new TLVParserService();
         }
 
-        public IEnumerable<MultipleAccessControlObject> ReadPayloadForMultipleAccessControlObjectInstances(string payload)
+        public IEnumerable<MultipleAccessControlObject> ReadMultipleAccessControlObjects(string payload)
         {
             var multipleAccessControlObjects = new List<MultipleAccessControlObject>();
 
@@ -39,7 +39,7 @@ namespace TLVParser.Services.AccessControlObjectService
             return multipleAccessControlObjects;
         }
 
-        public AccessControlObject ReadPayloadForSingleAccessControlObjectInstance(string payload)
+        public AccessControlObject ReadSingleAccessControlObject(string payload)
         {
             var tlvPayloadBytes = payload.Split((char[])null, StringSplitOptions.RemoveEmptyEntries).ToList();
             var deviceObjectInstance = ReadDeviceObjectInstance(tlvPayloadBytes);

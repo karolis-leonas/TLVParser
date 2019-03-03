@@ -7,6 +7,7 @@ using TLVParser.Models.DeviceObject;
 using TLVParser.Models.ResourceInstances;
 using TLVParser.Services.AccessControlObjectService;
 using TLVParser.Services.DeviceObjectService;
+using TLVParser.Services.ServerObjectService;
 
 namespace TLVParserUnitTests
 {
@@ -25,6 +26,18 @@ namespace TLVParserUnitTests
             var result = deviceObjectInstanceService.ReadSingleDeviceObject(manufacturerResourcePayLoad);
 
             Assert.AreEqual(result.Manufacturer, expectedParserValueResult);
+        }
+
+        [TestMethod]
+        public void QuickTest()
+        {
+            var manufacturerResourcePayLoad = "C1 07 55";
+            var expectedParserValueResult = "U";
+
+            var serverObjectService = new ServerObjectService();
+            var result = serverObjectService.ReadSingleServerObject(manufacturerResourcePayLoad);
+
+            Assert.AreEqual(result.BindingPreference, expectedParserValueResult);
         }
 
         [TestMethod]
@@ -92,7 +105,7 @@ namespace TLVParserUnitTests
         }
 
         [TestMethod]
-        public void MultipleObjectInstanceRequestWithTwoInstancesTest()
+        public void MultipleAccessControlObjectTest()
         {
             const string tlvPayloadBytes = @"
                 08 00 0E
@@ -108,20 +121,29 @@ namespace TLVParserUnitTests
                     C1 03 7F";
 
             var accessControlObjectService = new AccessControlObjectService();
-            var parsedAccessControlObjects = accessControlObjectService.ReadPayloadForMultipleAccessControlObjectInstances(tlvPayloadBytes).ToList();
+            var parsedAccessControlObjects = accessControlObjectService.ReadMultipleAccessControlObjects(tlvPayloadBytes).ToList();
 
             CheckAccessControlObjectInstances(parsedAccessControlObjects);
         }
 
         [TestMethod]
-        public void MultipleObjectInstanceRequestWithSingleInstanceTest()
+        public void MultipleServerObjectInstanceTest()
         {
             const string tlvPayloadBytes =@"
-                08 00 0D
+                08 00 0F
                     C1 00 01
                     C4 01 00 01 51 80
                     C1 06 01
                     C1 07 55";
+
+            var serverObjectService = new ServerObjectService();
+            var serverObjects = serverObjectService.ReadMultipleServerObjects(tlvPayloadBytes).ToList();
+
+            Assert.AreEqual(0, serverObjects[0].Id);
+            Assert.AreEqual(1, serverObjects[0].ServerObject.ShortServerId);
+            Assert.AreEqual(86400, serverObjects[0].ServerObject.Lifetime);
+            Assert.AreEqual(true, serverObjects[0].ServerObject.AreNotificationsStored);
+            Assert.AreEqual("U", serverObjects[0].ServerObject.BindingPreference);
         }
 
         [TestMethod]
