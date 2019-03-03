@@ -13,7 +13,7 @@ namespace TLVParser.Services.ServerObjectService
 
         public ServerObjectService()
         {
-            _tlvParserService = new TLVParserService();
+            _tlvParserService = new TLVParserService.TLVParserService();
         }
 
         public IEnumerable<ExtendedServerObject> ReadMultipleServerObjects(string payload)

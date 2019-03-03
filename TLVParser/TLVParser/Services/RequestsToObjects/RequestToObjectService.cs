@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TLVParser.Enums;
-using TLVParser.Models;
 using TLVParser.Models.ObjectLink;
 using TLVParser.Models.RequestsToObjects.RequestToObject65;
 using TLVParser.Models.RequestsToObjects.RequestToObject66;
-using TLVParser.Models.ResourceInstances;
-using TLVParser.Models.ServerObject;
-using TLVParser.Services.RequestsToObjects;
 
-namespace TLVParser.Services.ServerObjectService
+namespace TLVParser.Services.RequestsToObjects
 {
     public class RequestToObjectService : IRequestToObjectService
     {
@@ -19,7 +15,7 @@ namespace TLVParser.Services.ServerObjectService
 
         public RequestToObjectService()
         {
-            _tlvParserService = new TLVParserService();
+            _tlvParserService = new TLVParserService.TLVParserService();
         }
 
         public IEnumerable<ExtendedRequestToObject65> ReadRequestToObject65WithMultipleInstances(string payload)

@@ -15,7 +15,7 @@ namespace TLVParser.Services.AccessControlObjectService
 
         public AccessControlObjectService()
         {
-            _tlvParserService = new TLVParserService();
+            _tlvParserService = new TLVParserService.TLVParserService();
         }
 
         public IEnumerable<ExtendedAccessControlObject> ReadMultipleAccessControlObjects(string payload)

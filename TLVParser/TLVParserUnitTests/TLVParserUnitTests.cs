@@ -9,6 +9,7 @@ using TLVParser.Models.RequestsToObjects.RequestToObject66;
 using TLVParser.Models.ResourceInstances;
 using TLVParser.Services.AccessControlObjectService;
 using TLVParser.Services.DeviceObjectService;
+using TLVParser.Services.RequestsToObjects;
 using TLVParser.Services.ServerObjectService;
 
 namespace TLVParserUnitTests

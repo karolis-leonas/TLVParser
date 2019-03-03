@@ -7,7 +7,7 @@ using TLVParser.Models;
 using TLVParser.Models.ObjectLink;
 using TLVParser.Models.ResourceInstances;
 
-namespace TLVParser
+namespace TLVParser.Services.TLVParserService
 {
     public class TLVParserService: ITLVParserService
     {
@@ -191,11 +191,6 @@ namespace TLVParser
         private bool CheckIfBinary(string text)
         {
             return Regex.IsMatch(text, @"^[01]+$");
-        }
-
-        private bool CheckIfHexNumber(string text)
-        {
-            return Regex.IsMatch(text, @"\A\b[0-9a-fA-F]+\b\Z");
         }
     }
 }

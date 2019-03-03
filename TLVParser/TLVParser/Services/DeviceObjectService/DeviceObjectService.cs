@@ -13,7 +13,7 @@ namespace TLVParser.Services.DeviceObjectService
 
         public DeviceObjectService()
         {
-            _tlvParserService = new TLVParserService();
+            _tlvParserService = new TLVParserService.TLVParserService();
         }
 
         public IEnumerable<ExtendedDeviceObject> ReadMultipleDeviceObjects(string payload)
