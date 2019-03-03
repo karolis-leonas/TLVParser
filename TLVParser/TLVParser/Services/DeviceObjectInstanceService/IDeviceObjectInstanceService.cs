@@ -5,7 +5,7 @@ namespace TLVParser.Services.DeviceObjectInstanceService
 {
     public interface IDeviceObjectInstanceService
     {
-        IEnumerable<MultipleDeviceObjectInstance> ReadPayloadForMultipleObjectInstances(string payload);
-        DeviceObjectInstance ReadPayloadForSingleObjectInstance(string payload);
+        IEnumerable<MultipleDeviceObjectInstance> ReadPayloadForMultipleDeviceObjectInstances(string payload);
+        DeviceObjectInstance ReadPayloadForSingleDeviceObjectInstance(string payload);
     }
 }

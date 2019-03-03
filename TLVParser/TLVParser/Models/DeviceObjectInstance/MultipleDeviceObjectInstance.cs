@@ -3,6 +3,6 @@
     public class MultipleDeviceObjectInstance
     {
         public int Id { get; set; }
-        public DeviceObjectInstance AccessControlObject { get; set; }
+        public DeviceObjectInstance DeviceObjectInstance { get; set; }
     }
 }

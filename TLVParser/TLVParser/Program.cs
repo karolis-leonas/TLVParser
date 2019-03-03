@@ -43,7 +43,7 @@ C1 10 55";
 
             //do the actual work here
             var deviceObjectInstanceService = serviceProvider.GetService<IDeviceObjectInstanceService>();
-            var result = deviceObjectInstanceService.ReadPayloadForSingleObjectInstance(tlvPayloadBytes);
+            var result = deviceObjectInstanceService.ReadPayloadForSingleDeviceObjectInstance(tlvPayloadBytes);
 
             logger.LogDebug("TLV payload has been parsed!");
             logger.LogDebug("Press enter to close...");

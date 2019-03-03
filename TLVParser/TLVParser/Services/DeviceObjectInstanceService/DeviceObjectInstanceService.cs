@@ -17,15 +17,38 @@ namespace TLVParser.Services.DeviceObjectInstanceService
             _tlvParserService = new TLVParserService();
         }
 
-        public IEnumerable<MultipleDeviceObjectInstance> ReadPayloadForMultipleObjectInstances(string payload)
+        public IEnumerable<MultipleDeviceObjectInstance> ReadPayloadForMultipleDeviceObjectInstances(string payload)
         {
-            throw new NotImplementedException();
+            var multipleSingleInstanceObjects = new List<MultipleDeviceObjectInstance>();
+
+            var tlvPayloadBytes = payload.Split((char[])null, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var parsedTLVObjectInstanceObjects = _tlvParserService.ParseTLVPayload(tlvPayloadBytes).ToList();
+
+            foreach (var parsedTLVObjectInstanceObject in parsedTLVObjectInstanceObjects)
+            {
+                var singleInstanceObject = new MultipleDeviceObjectInstance()
+                {
+                    Id = parsedTLVObjectInstanceObject.Id,
+                    DeviceObjectInstance = ReadDeviceObjectInstance(parsedTLVObjectInstanceObject.ValueHex)
+                };
+
+                multipleSingleInstanceObjects.Add(singleInstanceObject);
+            }
+
+            return multipleSingleInstanceObjects;
         }
 
-        public DeviceObjectInstance ReadPayloadForSingleObjectInstance(string payload)
+        public DeviceObjectInstance ReadPayloadForSingleDeviceObjectInstance(string payload)
         {
             var tlvPayloadBytes = payload.Split((char[])null, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var deviceObjectInstance = ReadDeviceObjectInstance(tlvPayloadBytes);
 
+            return deviceObjectInstance;
+
+        }
+
+        private DeviceObjectInstance ReadDeviceObjectInstance(List<string> tlvPayloadBytes)
+        {
             var parsedTLVLines = _tlvParserService.ParseTLVPayload(tlvPayloadBytes);
 
             var deviceObjectInstance = new DeviceObjectInstance();
